@@ -1,9 +1,9 @@
 module Bindings
-    ( idle
-    , display
-    , reshape
-    , keyboardMouse
-    ) where
+       ( idle
+       , display
+       , reshape
+       , keyboardMoue
+       )
 
 import Data.IORef
 import Graphics.UI.GLUT
@@ -12,7 +12,7 @@ import Display
 
 reshape :: ReshapeCallback
 reshape size = do
-    viewport $= (Position 0 0, size)
+  viewport $= (Position 0 0, size)
 
 keyboardMouse :: IORef GLfloat -> IORef (GLfloat, GLfloat) -> KeyboardMouseCallback
 keyboardMouse a p key down _ _ =
