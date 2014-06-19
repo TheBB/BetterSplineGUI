@@ -5,18 +5,18 @@ import Bindings
 
 main :: IO ()
 main = do
-    (progName, args) <- getArgsAndInitialize
-    initialDisplayMode $= [WithDepthBuffer, DoubleBuffered]
-    window <- createWindow "Hello World"
+  (progName, args) <- getArgsAndInitialize
+  initialDisplayMode $= [WithDepthBuffer, DoubleBuffered]
+  window <- createWindow "Hello World"
 
-    angle <- newIORef 0
-    delta <- newIORef 0.1
-    pos <- newIORef (0, 0)
+  angle <- newIORef 0
+  delta <- newIORef 0.1
+  pos <- newIORef (0, 0)
 
-    depthFunc $= Just Less
-    reshapeCallback $= Just reshape
-    keyboardMouseCallback $= Just (keyboardMouse delta pos)
-    displayCallback $= display angle pos
-    idleCallback $= Just (idle angle delta)
+  depthFunc $= Just Less
+  reshapeCallback $= Just reshape
+  keyboardMouseCallback $= Just (keyboardMouse delta pos)
+  displayCallback $= display angle pos
+  idleCallback $= Just (idle angle delta)
 
-    mainLoop
+  mainLoop
