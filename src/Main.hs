@@ -10,6 +10,7 @@ import qualified Graphics.Rendering.OpenGL as GL
 import qualified Graphics.UI.GLFW as GLFW
 import Graphics.GLUtil as U
 import Graphics.Rendering.OpenGL (($=))
+import Linear as L
 
 import qualified Util.GLFW as W
 
@@ -30,49 +31,63 @@ initResources = do
       f = shaderPath </> "fs.glsl"
   Resources
     <$> U.simpleShaderProgram v f
-    <*> U.makeBuffer GL.ArrayBuffer interleaved
+    <*> U.makeBuffer GL.ArrayBuffer vertices
+    <*> U.makeBuffer GL.ArrayBuffer colors
 
   
 draw :: Resources -> GLFW.Window -> IO ()
 draw r win = do
   GL.clearColor $= GL.Color4 1 1 1 1
   GL.clear [GL.ColorBuffer]
+  
   (width, height) <- GLFW.getFramebufferSize win
   GL.viewport $= (GL.Position 0 0, GL.Size (fromIntegral width) (fromIntegral height))
 
   t <- maybe 0 id <$> GLFW.getTime
-  let fade :: GL.Index1 GL.GLfloat
-      fade = GL.Index1 . realToFrac $ sin (t*2*pi/5)/2 + 0.5
 
   GL.currentProgram $= (Just . U.program . triProgram $ r)
   U.enableAttrib (triProgram r) "coord2d"
   U.enableAttrib (triProgram r) "v_color"
-  GL.bindBuffer GL.ArrayBuffer $= Just (attrBuffer r)
+  
+  GL.bindBuffer GL.ArrayBuffer $= Just (vertBuffer r)
   U.setAttrib (triProgram r) "coord2d" GL.ToFloat $
-    GL.VertexArrayDescriptor 2 GL.Float (5 * floatSize) U.offset0
+    GL.VertexArrayDescriptor 2 GL.Float 0 U.offset0
+  
+  GL.bindBuffer GL.ArrayBuffer $= Just (colorBuffer r)
   U.setAttrib (triProgram r) "v_color" GL.ToFloat $
-    GL.VertexArrayDescriptor 3 GL.Float (5 * floatSize) (U.offsetPtr $ 2 * floatSize)
-  U.setUniform (triProgram r) "fade" fade
+    GL.VertexArrayDescriptor 3 GL.Float 0 U.offset0
+  
+  U.setUniform (triProgram r) "fade" (fade t)
   
   GL.drawArrays GL.Triangles 0 3
+  
   GL.vertexAttribArray (U.getAttrib (triProgram r) "coord2d") $= GL.Disabled
   GL.vertexAttribArray (U.getAttrib (triProgram r) "v_color") $= GL.Disabled
 
 
 data Resources = Resources
                  { triProgram :: U.ShaderProgram
-                 , attrBuffer :: GL.BufferObject
+                 , vertBuffer :: GL.BufferObject
+                 , colorBuffer :: GL.BufferObject
                  }
                  
+fade :: Double -> GL.Index1 GL.GLfloat
+fade t = GL.Index1 . realToFrac $ sin (t*2*pi/5)/2 + 0.5
                  
 floatSize :: Num a => a
 floatSize = fromIntegral $ F.sizeOf (undefined :: GL.GLfloat)
 
 shaderPath :: FilePath
 shaderPath = "src" </> "shader"
-             
-interleaved :: [Float]
-interleaved = [  0.0,  0.8, 1, 1, 0
-              , -0.8, -0.8, 0, 0, 1
-              ,  0.8, -0.8, 1, 0, 0
-              ]
+
+vertices :: [L.V2 Float]
+vertices = [ L.V2 0.0 0.8
+           , L.V2 (-0.8) (-0.8)
+           , L.V2 0.8 (-0.8)
+           ]
+
+colors :: [L.V3 Float]
+colors = [ L.V3 1 1 0
+         , L.V3 0 0 1
+         , L.V3 1 0 0
+         ]
