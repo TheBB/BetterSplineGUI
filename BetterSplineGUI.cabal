@@ -1,25 +1,25 @@
-name:                BetterSplineGUI
-version:             0.1.0.0
+name:                           BetterSplineGUI
+version:                        0.1.0.0
 -- synopsis:            
 -- description:         
-license:             AllRightsReserved
-license-file:        LICENSE
-author:              Eivind Fonn
-maintainer:          evfonn@gmail.com
+license:                        AllRightsReserved
+license-file:                   LICENSE
+author:                         Eivind Fonn
+maintainer:                     evfonn@gmail.com
 -- copyright:           
-category:            Graphics
-build-type:          Simple
+category:                       Graphics
+build-type:                     Simple
 -- extra-source-files:  
-cabal-version:       >= 1.10
+cabal-version:                  >= 1.10
 
 executable BetterSplineGUI
-    main-is:             Main.hs
+    main-is:                    Main.hs
     -- other-modules:       
     -- other-extensions:    
-    build-depends:       mtl >= 2.2.1,
-                         gtk >= 0.12.5.7,
-                         OpenGL >= 2.9.2.0,
-                         base >= 4.7 && < 4.8,
-                         gtkglext
-    hs-source-dirs:      src
-    default-language:    Haskell2010
+    build-depends:              base >= 4.7 && < 4.8,
+                                GLFW-b >= 1.4.6,
+                                OpenGL >= 2.9.2.0,
+                                bytestring >= 0.10.4.0,
+                                vector >= 0.10.11.0
+    hs-source-dirs:             src
+    default-language:           Haskell2010

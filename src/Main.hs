@@ -1,74 +1,95 @@
-module Main (main) where
+{-# LANGUAGE OverloadedStrings #-}
 
-import Graphics.UI.Gtk as Gtk
-import Graphics.UI.Gtk (AttrOp((:=)))
-import qualified Graphics.UI.Gtk.OpenGL as GtkGL
-import Graphics.Rendering.OpenGL as GL
+module Main where
 
-import Control.Monad (forM, forM_)
-import Control.Monad.Trans (liftIO)
+import qualified Data.ByteString as BS
+import qualified Data.Vector.Storable as V
+import Control.Monad (unless)
+import System.Exit (exitFailure)
+import System.IO
+  
+import qualified Graphics.Rendering.OpenGL as GL
+import qualified Graphics.UI.GLFW as GLFW
+import Graphics.Rendering.OpenGL (($=))
 
+import qualified Util.GLFW as W
+
+  
 main :: IO ()
 main = do
-  initGUI
+  win <- W.initialize "My First Triangle"
+  (prog, attrib) <- initResources
+  W.mainLoop (draw prog attrib win) win
+  W.cleanup win
 
-  GtkGL.initGL
-  glConfig <- GtkGL.glConfigNew [ GtkGL.GLModeRGBA
-                                , GtkGL.GLModeDepth
-                                , GtkGL.GLModeDouble
-                                ]
-
-  canvases@[top, front, side, perspective] <-
-    mapM GtkGL.glDrawingAreaNew (replicate 4 glConfig)
-
-  window <- windowNew
-  window `on` deleteEvent $ liftIO mainQuit >> return False
-
-  table <- tableNew 2 2 True
-  tableSetRowSpacings table 5
-  tableSetColSpacings table 5
-  tableAttachDefaults table top         0 1 0 1
-  tableAttachDefaults table front       0 1 1 2
-  tableAttachDefaults table side        1 2 1 2
-  tableAttachDefaults table perspective 1 2 0 1
-
-  forM_ canvases $ \c -> do
-    widgetSetSizeRequest c 200 200
-    
-    c `on` realize $ GtkGL.withGLDrawingArea c $ \_ -> do
-      clearColor $= (Color4 0.3 0.3 0.3 0.3)
-      matrixMode $= Projection
-      loadIdentity
-      ortho 0 1 0 1 (- 1) 1
-      depthFunc $= Just Less
-      drawBuffer $= BackBuffers
-
-    c `on` exposeEvent $ do
-      liftIO $ GtkGL.withGLDrawingArea c $ \glwindow -> do
-        clear [DepthBuffer, ColorBuffer]
-        cube 0.5
-        GtkGL.glDrawableSwapBuffers glwindow
-      return True
-
-  set window [ containerChild := table
-             , windowTitle := "Better Spline GUI"
-             ]
-
-  widgetShowAll window
-  mainGUI
-
-vertex3f :: (GLfloat, GLfloat, GLfloat) -> IO ()
-vertex3f (x, y, z) = vertex $ Vertex3 x y z
   
-cube :: GLfloat -> IO ()
-cube w = do
-  loadIdentity
-  color (Color3 1 1 1 :: Color3 GLfloat)
-  renderPrimitive Quads $ mapM_ vertex3f
-    [ ( w, w, w), ( w, w,-w), ( w,-w,-w), ( w,-w, w)
-    , ( w, w, w), ( w, w,-w), (-w, w,-w), (-w, w, w)
-    , ( w, w, w), ( w,-w, w), (-w,-w, w), (-w, w, w)
-    , (-w, w, w), (-w, w,-w), (-w,-w,-w), (-w,-w, w)
-    , ( w,-w, w), ( w,-w,-w), (-w,-w,-w), (-w,-w, w)
-    , ( w, w,-w), ( w,-w,-w), (-w,-w,-w), (-w, w,-w)
-    ]
+initResources :: IO (GL.Program, GL.AttribLocation)
+initResources = do
+  vs <- GL.createShader GL.VertexShader
+  GL.shaderSourceBS vs $= vsSource
+  GL.compileShader vs
+  vsOK <- GL.get $ GL.compileStatus vs
+  unless vsOK $ do
+    hPutStrLn stderr "Error in vertex shader"
+    exitFailure
+
+  fs <- GL.createShader GL.FragmentShader
+  GL.shaderSourceBS fs $= fsSource
+  GL.compileShader fs
+  fsOK <- GL.get $ GL.compileStatus fs
+  unless fsOK $ do
+    hPutStrLn stderr "Error in fragment shader"
+    exitFailure
+
+  program <- GL.createProgram
+  GL.attachShader program vs
+  GL.attachShader program fs
+  GL.attribLocation program "coord2d" $= GL.AttribLocation 0
+  GL.linkProgram program
+  linkOK <- GL.get $ GL.linkStatus program
+  GL.validateProgram program
+  status <- GL.get $ GL.validateStatus program
+  unless (linkOK && status) $ do
+    hPutStrLn stderr "GL.linkProgram error"
+    plog <- GL.get $ GL.programInfoLog program
+    putStrLn plog
+    exitFailure
+  GL.currentProgram $= Just program
+
+  return (program, GL.AttribLocation 0)
+
+
+draw :: GL.Program -> GL.AttribLocation -> GLFW.Window -> IO ()
+draw program attrib win = do
+  GL.clearColor $= GL.Color4 1 1 1 1
+  GL.clear [GL.ColorBuffer]
+  (width, height) <- GLFW.getFramebufferSize win
+  GL.viewport $= (GL.Position 0 0, GL.Size (fromIntegral width) (fromIntegral height))
+
+  GL.currentProgram $= Just program
+  GL.vertexAttribArray attrib $= GL.Enabled
+  V.unsafeWith vertices $ \ptr ->
+    GL.vertexAttribPointer attrib $= (GL.ToFloat, GL.VertexArrayDescriptor 2 GL.Float 0 ptr)
+  GL.drawArrays GL.Triangles 0 3
+  GL.vertexAttribArray attrib $= GL.Disabled
+
+  
+vsSource, fsSource :: BS.ByteString
+vsSource = BS.intercalate "\n" 
+           [ "attribute vec2 coord2d;"
+           , "void main(void) {"
+           , "  gl_Position = vec4(coord2d, 0.0, 1.0);"
+           , "}"
+           ]
+fsSource = BS.intercalate "\n"
+           [ "void main(void) {"
+           , "  gl_FragColor = vec4(0, 0, 1, 1);"
+           , "}"
+           ]
+           
+
+vertices :: V.Vector Float
+vertices = V.fromList [  0.0,  0.8
+                      , -0.8, -0.8
+                      ,  0.8, -0.8
+                      ]
