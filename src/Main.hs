@@ -2,7 +2,6 @@
 
 module Main where
 
-import qualified Data.Vector.Storable as V
 import Control.Applicative
 import System.FilePath ((</>))
   
@@ -13,7 +12,6 @@ import Graphics.Rendering.OpenGL (($=))
 
 import qualified Util.GLFW as W
 
-
   
 main :: IO ()
 main = do
@@ -23,38 +21,66 @@ main = do
   W.cleanup win
 
   
-initResources :: IO Program
+initResources :: IO Resources
 initResources = do
-  vs <- U.loadShader GL.VertexShader $ shaderPath </> "vs.glsl"
-  fs <- U.loadShader GL.FragmentShader $ shaderPath </> "fs.glsl"
-  p <- U.linkShaderProgram [vs, fs]
   GL.blend $= GL.Enabled
   GL.blendFunc $= (GL.SrcAlpha, GL.OneMinusSrcAlpha)
-  Program p <$> GL.get (GL.attribLocation p "coord2d")
-  
+  let v = shaderPath </> "vs.glsl"
+      f = shaderPath </> "fs.glsl"
+  Resources
+    <$> U.simpleShaderProgram v f
+    <*> U.makeBuffer GL.ArrayBuffer vertices
+    <*> U.makeBuffer GL.ArrayBuffer colors
+    
 
-draw :: Program -> GLFW.Window -> IO ()
-draw (Program program attrib) win = do
+draw :: Resources -> GLFW.Window -> IO ()
+draw r win = do
   GL.clearColor $= GL.Color4 1 1 1 1
   GL.clear [GL.ColorBuffer]
   (width, height) <- GLFW.getFramebufferSize win
   GL.viewport $= (GL.Position 0 0, GL.Size (fromIntegral width) (fromIntegral height))
 
-  GL.currentProgram $= Just program
-  GL.vertexAttribArray attrib $= GL.Enabled
-  V.unsafeWith vertices $ \ptr ->
-    GL.vertexAttribPointer attrib $= (GL.ToFloat, GL.VertexArrayDescriptor 2 GL.Float 0 ptr)
+  t <- maybe 0 id <$> GLFW.getTime
+  let fade :: GL.Index1 GL.GLfloat
+      fade = GL.Index1 . realToFrac $ sin (t*2*pi/5)/2 + 0.5
+
+  GL.currentProgram $= (Just . U.program . triProgram $ r)
+  U.enableAttrib (triProgram r) "coord2d"
+  U.enableAttrib (triProgram r) "v_color"
+  
+  GL.bindBuffer GL.ArrayBuffer $= Just (vertBuffer r)
+  U.setAttrib (triProgram r) "coord2d" GL.ToFloat $
+    GL.VertexArrayDescriptor 2 GL.Float 0 U.offset0
+  
+  GL.bindBuffer GL.ArrayBuffer $= Just (colorBuffer r)
+  U.setAttrib (triProgram r) "v_color" GL.ToFloat $
+    GL.VertexArrayDescriptor 3 GL.Float 0 U.offset0
+
+  U.setUniform (triProgram r) "fade" fade
+  
   GL.drawArrays GL.Triangles 0 3
-  GL.vertexAttribArray attrib $= GL.Disabled
+  GL.vertexAttribArray (U.getAttrib (triProgram r) "coord2d") $= GL.Disabled
+  GL.vertexAttribArray (U.getAttrib (triProgram r) "v_color") $= GL.Disabled
 
 
-data Program = Program GL.Program GL.AttribLocation
+data Resources = Resources
+                 { triProgram :: U.ShaderProgram
+                 , vertBuffer :: GL.BufferObject
+                 , colorBuffer :: GL.BufferObject
+                 }
+                 
 
 shaderPath :: FilePath
 shaderPath = "src" </> "shader"
-
-vertices :: V.Vector Float
-vertices = V.fromList [  0.0,  0.8
-                      , -0.8, -0.8
-                      ,  0.8, -0.8
-                      ]
+             
+vertices :: [Float]
+vertices = [  0.0,  0.8
+           , -0.8, -0.8
+           ,  0.8, -0.8
+           ]
+           
+colors :: [Float]
+colors = [ 1, 1, 0
+         , 0, 0, 1
+         , 1, 0, 0
+         ]
