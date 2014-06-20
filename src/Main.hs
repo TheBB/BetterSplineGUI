@@ -2,65 +2,39 @@
 
 module Main where
 
-import qualified Data.ByteString as BS
 import qualified Data.Vector.Storable as V
-import Control.Monad (unless)
-import System.Exit (exitFailure)
-import System.IO
+import Control.Applicative
+import System.FilePath ((</>))
   
 import qualified Graphics.Rendering.OpenGL as GL
 import qualified Graphics.UI.GLFW as GLFW
+import Graphics.GLUtil as U
 import Graphics.Rendering.OpenGL (($=))
 
 import qualified Util.GLFW as W
+
 
   
 main :: IO ()
 main = do
   win <- W.initialize "My First Triangle"
-  (prog, attrib) <- initResources
-  W.mainLoop (draw prog attrib win) win
+  program <- initResources
+  W.mainLoop (draw program win) win
   W.cleanup win
 
   
-initResources :: IO (GL.Program, GL.AttribLocation)
+initResources :: IO Program
 initResources = do
-  vs <- GL.createShader GL.VertexShader
-  GL.shaderSourceBS vs $= vsSource
-  GL.compileShader vs
-  vsOK <- GL.get $ GL.compileStatus vs
-  unless vsOK $ do
-    hPutStrLn stderr "Error in vertex shader"
-    exitFailure
+  vs <- U.loadShader GL.VertexShader $ shaderPath </> "vs.glsl"
+  fs <- U.loadShader GL.FragmentShader $ shaderPath </> "fs.glsl"
+  p <- U.linkShaderProgram [vs, fs]
+  GL.blend $= GL.Enabled
+  GL.blendFunc $= (GL.SrcAlpha, GL.OneMinusSrcAlpha)
+  Program p <$> GL.get (GL.attribLocation p "coord2d")
+  
 
-  fs <- GL.createShader GL.FragmentShader
-  GL.shaderSourceBS fs $= fsSource
-  GL.compileShader fs
-  fsOK <- GL.get $ GL.compileStatus fs
-  unless fsOK $ do
-    hPutStrLn stderr "Error in fragment shader"
-    exitFailure
-
-  program <- GL.createProgram
-  GL.attachShader program vs
-  GL.attachShader program fs
-  GL.attribLocation program "coord2d" $= GL.AttribLocation 0
-  GL.linkProgram program
-  linkOK <- GL.get $ GL.linkStatus program
-  GL.validateProgram program
-  status <- GL.get $ GL.validateStatus program
-  unless (linkOK && status) $ do
-    hPutStrLn stderr "GL.linkProgram error"
-    plog <- GL.get $ GL.programInfoLog program
-    putStrLn plog
-    exitFailure
-  GL.currentProgram $= Just program
-
-  return (program, GL.AttribLocation 0)
-
-
-draw :: GL.Program -> GL.AttribLocation -> GLFW.Window -> IO ()
-draw program attrib win = do
+draw :: Program -> GLFW.Window -> IO ()
+draw (Program program attrib) win = do
   GL.clearColor $= GL.Color4 1 1 1 1
   GL.clear [GL.ColorBuffer]
   (width, height) <- GLFW.getFramebufferSize win
@@ -73,20 +47,11 @@ draw program attrib win = do
   GL.drawArrays GL.Triangles 0 3
   GL.vertexAttribArray attrib $= GL.Disabled
 
-  
-vsSource, fsSource :: BS.ByteString
-vsSource = BS.intercalate "\n" 
-           [ "attribute vec2 coord2d;"
-           , "void main(void) {"
-           , "  gl_Position = vec4(coord2d, 0.0, 1.0);"
-           , "}"
-           ]
-fsSource = BS.intercalate "\n"
-           [ "void main(void) {"
-           , "  gl_FragColor = vec4(0, 0, 1, 1);"
-           , "}"
-           ]
-           
+
+data Program = Program GL.Program GL.AttribLocation
+
+shaderPath :: FilePath
+shaderPath = "src" </> "shader"
 
 vertices :: V.Vector Float
 vertices = V.fromList [  0.0,  0.8
