@@ -3,7 +3,6 @@
 module Main where
 
 import Control.Applicative
-import Foreign.Storable as F
 import System.FilePath ((</>))
   
 import qualified Graphics.Rendering.OpenGL as GL
@@ -46,22 +45,22 @@ draw r win = do
   t <- maybe 0 id <$> GLFW.getTime
 
   GL.currentProgram $= (Just . U.program . triProgram $ r)
-  U.enableAttrib (triProgram r) "coord2d"
+  U.enableAttrib (triProgram r) "coord3d"
   U.enableAttrib (triProgram r) "v_color"
   
   GL.bindBuffer GL.ArrayBuffer $= Just (vertBuffer r)
-  U.setAttrib (triProgram r) "coord2d" GL.ToFloat $
+  U.setAttrib (triProgram r) "coord3d" GL.ToFloat $
     GL.VertexArrayDescriptor 2 GL.Float 0 U.offset0
   
   GL.bindBuffer GL.ArrayBuffer $= Just (colorBuffer r)
   U.setAttrib (triProgram r) "v_color" GL.ToFloat $
     GL.VertexArrayDescriptor 3 GL.Float 0 U.offset0
   
-  U.setUniform (triProgram r) "fade" (fade t)
+  U.asUniform (transformM t) $ U.getUniform (triProgram r) "m_transform"
   
   GL.drawArrays GL.Triangles 0 3
   
-  GL.vertexAttribArray (U.getAttrib (triProgram r) "coord2d") $= GL.Disabled
+  GL.vertexAttribArray (U.getAttrib (triProgram r) "coord3d") $= GL.Disabled
   GL.vertexAttribArray (U.getAttrib (triProgram r) "v_color") $= GL.Disabled
 
 
@@ -70,12 +69,15 @@ data Resources = Resources
                  , vertBuffer :: GL.BufferObject
                  , colorBuffer :: GL.BufferObject
                  }
-                 
-fade :: Double -> GL.Index1 GL.GLfloat
-fade t = GL.Index1 . realToFrac $ sin (t*2*pi/5)/2 + 0.5
-                 
-floatSize :: Num a => a
-floatSize = fromIntegral $ F.sizeOf (undefined :: GL.GLfloat)
+
+transformM :: Real n => n -> L.M44 GL.GLfloat
+transformM t' = translation L.!*! rotation where
+  translation = L.mkTransformationMat L.eye3 $ L.V3 dx 0 0
+  rotation = L.m33_to_m44 . L.fromQuaternion $ L.axisAngle (L.V3 0 0 1) angle
+  dx = sin t * 2 * pi / 5
+  angle = t * pi / 4
+  t = realToFrac t'
+ 
 
 shaderPath :: FilePath
 shaderPath = "src" </> "shader"
