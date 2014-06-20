@@ -3,6 +3,7 @@
 module Main where
 
 import Control.Applicative
+import Foreign.Storable as F
 import System.FilePath ((</>))
   
 import qualified Graphics.Rendering.OpenGL as GL
@@ -29,10 +30,9 @@ initResources = do
       f = shaderPath </> "fs.glsl"
   Resources
     <$> U.simpleShaderProgram v f
-    <*> U.makeBuffer GL.ArrayBuffer vertices
-    <*> U.makeBuffer GL.ArrayBuffer colors
-    
+    <*> U.makeBuffer GL.ArrayBuffer interleaved
 
+  
 draw :: Resources -> GLFW.Window -> IO ()
 draw r win = do
   GL.clearColor $= GL.Color4 1 1 1 1
@@ -47,15 +47,11 @@ draw r win = do
   GL.currentProgram $= (Just . U.program . triProgram $ r)
   U.enableAttrib (triProgram r) "coord2d"
   U.enableAttrib (triProgram r) "v_color"
-  
-  GL.bindBuffer GL.ArrayBuffer $= Just (vertBuffer r)
+  GL.bindBuffer GL.ArrayBuffer $= Just (attrBuffer r)
   U.setAttrib (triProgram r) "coord2d" GL.ToFloat $
-    GL.VertexArrayDescriptor 2 GL.Float 0 U.offset0
-  
-  GL.bindBuffer GL.ArrayBuffer $= Just (colorBuffer r)
+    GL.VertexArrayDescriptor 2 GL.Float (5 * floatSize) U.offset0
   U.setAttrib (triProgram r) "v_color" GL.ToFloat $
-    GL.VertexArrayDescriptor 3 GL.Float 0 U.offset0
-
+    GL.VertexArrayDescriptor 3 GL.Float (5 * floatSize) (U.offsetPtr $ 2 * floatSize)
   U.setUniform (triProgram r) "fade" fade
   
   GL.drawArrays GL.Triangles 0 3
@@ -65,22 +61,18 @@ draw r win = do
 
 data Resources = Resources
                  { triProgram :: U.ShaderProgram
-                 , vertBuffer :: GL.BufferObject
-                 , colorBuffer :: GL.BufferObject
+                 , attrBuffer :: GL.BufferObject
                  }
                  
+                 
+floatSize :: Num a => a
+floatSize = fromIntegral $ F.sizeOf (undefined :: GL.GLfloat)
 
 shaderPath :: FilePath
 shaderPath = "src" </> "shader"
              
-vertices :: [Float]
-vertices = [  0.0,  0.8
-           , -0.8, -0.8
-           ,  0.8, -0.8
-           ]
-           
-colors :: [Float]
-colors = [ 1, 1, 0
-         , 0, 0, 1
-         , 1, 0, 0
-         ]
+interleaved :: [Float]
+interleaved = [  0.0,  0.8, 1, 1, 0
+              , -0.8, -0.8, 0, 0, 1
+              ,  0.8, -0.8, 1, 0, 0
+              ]
