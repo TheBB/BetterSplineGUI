@@ -28,11 +28,16 @@ import Linear ((!*!))
 import Graphics.Rendering.OpenGL (($=))
 import Graphics.UI.Gtk (AttrOp((:=)), on)
 
+import Control.Event.Handler
+import Reactive.Banana
+import Reactive.Banana.Frameworks
+
 main :: IO ()
 main = do
   GLFW.init
   Gtk.initGUI
   GtkGL.initGL
+  
   glconfig <- GtkGL.glConfigNew [ GtkGL.GLModeRGBA
                                 , GtkGL.GLModeDepth
                                 , GtkGL.GLModeDouble
@@ -40,17 +45,14 @@ main = do
   canvas <- GtkGL.glDrawingAreaNew glconfig
   Gtk.widgetSetSizeRequest canvas 640 480
 
-  Gtk.onRealize canvas $ GtkGL.withGLDrawingArea canvas $ \_ -> do
-    program <- initResources
-    Gtk.onExpose canvas $ \_ -> do
-      GtkGL.withGLDrawingArea canvas $ \glwindow -> do
-        draw program glwindow
-        GtkGL.glDrawableSwapBuffers glwindow
-      return True
-    return ()
+  (addOnRealize, onRealize) <- newAddHandler
 
+  network <- compile (makeNetwork addOnRealize canvas)
+  actuate network
+
+  Gtk.onRealize canvas $ GtkGL.withGLDrawingArea canvas $ \_ -> onRealize ()
   Gtk.timeoutAddFull (Gtk.widgetQueueDraw canvas >> return True) Gtk.priorityDefaultIdle animationWaitTime
-    
+
   window <- Gtk.windowNew
   Gtk.onDestroy window Gtk.mainQuit
   Gtk.set window [ Gtk.windowTitle := "Gtk2Hs + HOpenGL demo"
@@ -59,6 +61,39 @@ main = do
 
   Gtk.widgetShowAll window
   Gtk.mainGUI
+
+  -- Gtk.onRealize canvas $ GtkGL.withGLDrawingArea canvas $ \_ -> do
+  --   program <- initResources
+  --   Gtk.onExpose canvas $ \_ -> do
+  --     GtkGL.withGLDrawingArea canvas $ \glwindow -> do
+  --       draw program glwindow
+  --       GtkGL.glDrawableSwapBuffers glwindow
+  --     return True
+  --   return ()
+
+  -- Gtk.timeoutAddFull (Gtk.widgetQueueDraw canvas >> return True) Gtk.priorityDefaultIdle animationWaitTime
+    
+  -- window <- Gtk.windowNew
+  -- Gtk.onDestroy window Gtk.mainQuit
+  -- Gtk.set window [ Gtk.windowTitle := "Gtk2Hs + HOpenGL demo"
+  --                , Gtk.containerChild := canvas
+  --                ]
+
+  -- Gtk.widgetShowAll window
+  -- Gtk.mainGUI
+
+makeNetwork :: Frameworks t => AddHandler () -> GtkGL.GLDrawingArea -> Moment t ()
+makeNetwork addOnRealize canvas = do
+  eRealize <- fromAddHandler addOnRealize
+  reactimate $ fmap doRealize eRealize
+  where doRealize _ = do
+          program <- initResources
+          Gtk.onExpose canvas $ \_ -> do
+            GtkGL.withGLDrawingArea canvas $ \glwindow -> do
+              draw program glwindow
+              GtkGL.glDrawableSwapBuffers glwindow
+            return True
+          return ()
 
 vSrc = $(embedFile "src/shader/vs.glsl") :: BS.ByteString
 fSrc = $(embedFile "src/shader/fs.glsl") :: BS.ByteString
