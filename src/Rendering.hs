@@ -54,6 +54,7 @@ doRealize canvas = do
 
 
 -- These types and singletons correspond to the attributes declared in the shaders.
+-- This is Vinyl type masturbation, no need to worry much about it.
 type Pos = "coord3d" ::: L.V3 GL.GLfloat
 type Color = "v_color" ::: L.V3 GL.GLfloat
 type MVP = "mvp" ::: L.M44 GL.GLfloat
