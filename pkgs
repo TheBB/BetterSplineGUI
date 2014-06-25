@@ -1,0 +1,551 @@
+* Cabal
+    Synopsis: A framework for packaging Haskell software
+    Default available version: 1.20.0.1
+    Installed versions: 1.18.1.3
+    Homepage: http://www.haskell.org/cabal/
+    License:  BSD3
+
+* GLFW-b
+    Synopsis: Bindings to GLFW OpenGL library
+    Default available version: 1.4.6
+    Installed versions: 1.4.6
+    License:  BSD3
+
+* GLURaw
+    Synopsis: A raw binding for the OpenGL graphics system
+    Default available version: 1.4.0.1
+    Installed versions: 1.4.0.1
+    Homepage: http://www.haskell.org/haskellwiki/Opengl
+    License:  BSD3
+
+* GLUtil
+    Synopsis: Miscellaneous OpenGL utilities.
+    Default available version: 0.7.4
+    Installed versions: 0.7.4
+    License:  BSD3
+
+* JuicyPixels
+    Synopsis: Picture loading/serialization (in png, jpeg, bitmap, gif, tiff and
+              radiance)
+    Default available version: 3.1.5.2
+    Installed versions: 3.1.5.2
+    Homepage: https://github.com/Twinside/Juicy.Pixels
+    License:  BSD3
+
+* OpenGL
+    Synopsis: A binding for the OpenGL graphics system
+    Default available version: 2.9.2.0
+    Installed versions: 2.9.2.0
+    Homepage: http://www.haskell.org/haskellwiki/Opengl
+    License:  BSD3
+
+* OpenGLRaw
+    Synopsis: A raw binding for the OpenGL graphics system
+    Default available version: 1.5.0.0
+    Installed versions: 1.5.0.0
+    Homepage: http://www.haskell.org/haskellwiki/Opengl
+    License:  BSD3
+
+* adjunctions
+    Synopsis: Adjunctions and representable functors
+    Default available version: 4.1.0.1
+    Installed versions: 4.1.0.1
+    Homepage: http://github.com/ekmett/adjunctions/
+    License:  BSD3
+
+* aeson
+    Synopsis: Fast JSON parsing and encoding
+    Default available version: 0.7.0.6
+    Installed versions: 0.7.0.6
+    Homepage: https://github.com/bos/aeson
+    License:  BSD3
+
+* array
+    Synopsis: Mutable and immutable arrays
+    Default available version: 0.5.0.0
+    Installed versions: 0.5.0.0
+    License:  BSD3
+
+* attoparsec
+    Synopsis: Fast combinator parsing for bytestrings and text
+    Default available version: 0.12.1.0
+    Installed versions: 0.12.1.0
+    Homepage: https://github.com/bos/attoparsec
+    License:  BSD3
+
+* base
+    Synopsis: Basic libraries
+    Default available version: 4.7.0.0
+    Installed versions: 4.7.0.0
+    License:  BSD3
+
+* bifunctors
+    Synopsis: Bifunctors
+    Default available version: 4.1.1.1
+    Installed versions: 4.1.1.1
+    Homepage: http://github.com/ekmett/bifunctors/
+    License:  BSD3
+
+* bin-package-db
+    Default available version: [ Not available from any configured repository ]
+    Installed versions: 0.0.0.0
+    License:  BSD3
+
+* binary
+    Synopsis: Binary serialisation for Haskell values using lazy ByteStrings
+    Default available version: 0.7.2.1
+    Installed versions: 0.7.1.0
+    Homepage: https://github.com/kolmodin/binary
+    License:  BSD3
+
+* bindings-DSL
+    Synopsis: FFI domain specific language, on top of hsc2hs.
+    Default available version: 1.0.21
+    Installed versions: 1.0.21
+    Homepage: https://github.com/jwiegley/bindings-dsl/wiki
+    License:  BSD3
+
+* bindings-GLFW
+    Synopsis: Low-level bindings to GLFW OpenGL library
+    Default available version: 3.0.3.2
+    Installed versions: 3.0.3.2
+    License:  BSD3
+
+* bytestring
+    Synopsis: Fast, compact, strict and lazy byte strings with a list interface
+    Default available version: 0.10.4.0
+    Installed versions: 0.10.4.0
+    Homepage: https://github.com/haskell/bytestring
+    License:  BSD3
+
+* cairo
+    Synopsis: Binding to the Cairo library.
+    Default available version: 0.12.5.3
+    Installed versions: 0.12.5.3
+    Homepage: http://projects.haskell.org/gtk2hs/
+    License:  BSD3
+
+* clock
+    Synopsis: High-resolution clock functions: monotonic, realtime, cputime.
+    Default available version: 0.4.0.1
+    Installed versions: 0.4.0.1
+    Homepage: http://corsis.github.com/clock/
+    License:  BSD3
+
+* comonad
+    Synopsis: Comonads
+    Default available version: 4.2
+    Installed versions: 4.2
+    Homepage: http://github.com/ekmett/comonad/
+    License:  BSD3
+
+* containers
+    Synopsis: Assorted concrete container types
+    Default available version: 0.5.5.1
+    Installed versions: 0.5.5.1
+    License:  BSD3
+
+* contravariant
+    Synopsis: Contravariant functors
+    Default available version: 0.6
+    Installed versions: 0.6
+    Homepage: http://github.com/ekmett/contravariant/
+    License:  BSD3
+
+* cpphs
+    Synopsis: A liberalised re-implementation of cpp, the C pre-processor.
+    Default available version: 1.18.4
+    Installed versions: 1.18.4
+    Homepage: http://projects.haskell.org/cpphs/
+    License:  LGPL
+
+* deepseq
+    Synopsis: Deep evaluation of data structures
+    Default available version: 1.3.0.2
+    Installed versions: 1.3.0.2
+    License:  BSD3
+
+* directory
+    Synopsis: library for directory handling
+    Default available version: 1.2.1.0
+    Installed versions: 1.2.1.0
+    License:  BSD3
+
+* distributive
+    Synopsis: Distributive functors -- Dual to Traversable
+    Default available version: 0.4.4
+    Installed versions: 0.4.4
+    Homepage: http://github.com/ekmett/distributive/
+    License:  BSD3
+
+* dlist
+    Synopsis: Difference lists
+    Default available version: 0.7.0.1
+    Installed versions: 0.7.0.1
+    Homepage: https://github.com/spl/dlist
+    License:  BSD3
+
+* exceptions
+    Synopsis: Extensible optionally-pure exceptions
+    Default available version: 0.6.1
+    Installed versions: 0.6.1
+    Homepage: http://github.com/ekmett/exceptions/
+    License:  BSD3
+
+* file-embed
+    Synopsis: Use Template Haskell to embed file contents directly.
+    Default available version: 0.0.7
+    Installed versions: 0.0.7
+    Homepage: https://github.com/snoyberg/file-embed
+    License:  BSD3
+
+* filepath
+    Synopsis: Library for manipulating FilePaths in a cross platform way.
+    Default available version: 1.3.0.2
+    Installed versions: 1.3.0.2
+    Homepage: http://www-users.cs.york.ac.uk/~ndm/filepath/
+    License:  BSD3
+
+* free
+    Synopsis: Monads for free
+    Default available version: 4.9
+    Installed versions: 4.9
+    Homepage: http://github.com/ekmett/free/
+    License:  BSD3
+
+* ghc
+    Default available version: [ Not available from any configured repository ]
+    Installed versions: 7.8.2
+    Homepage: http://www.haskell.org/ghc/
+    License:  BSD3
+
+* ghc-prim
+    Synopsis: GHC primitives
+    Default available version: 0.3.1.0
+    Installed versions: 0.3.1.0
+    License:  BSD3
+
+* gio
+    Synopsis: Binding to the GIO.
+    Default available version: 0.12.5.3
+    Installed versions: 0.12.5.3
+    Homepage: http://projects.haskell.org/gtk2hs/
+    License:  LGPL-2.1
+
+* glib
+    Synopsis: Binding to the GLIB library for Gtk2Hs.
+    Default available version: 0.12.5.4
+    Installed versions: 0.12.5.4
+    Homepage: http://projects.haskell.org/gtk2hs/
+    License:  LGPL-2.1
+
+* gtk
+    Synopsis: Binding to the Gtk+ graphical user interface library.
+    Default available version: 0.12.5.7
+    Installed versions: 0.12.5.7
+    Homepage: http://projects.haskell.org/gtk2hs/
+    License:  LGPL-2.1
+
+* gtkglext
+    Synopsis: Binding to the GTK+ OpenGL Extension
+    Default available version: 0.12.5.0
+    Installed versions: 0.12.5.0
+    Homepage: http://projects.haskell.org/gtk2hs/
+    License:  LGPL-2.1
+
+* hashable
+    Synopsis: A class for types that can be converted to a hash value
+    Default available version: 1.2.2.0
+    Installed versions: 1.2.2.0
+    Homepage: http://github.com/tibbe/hashable
+    License:  BSD3
+
+* haskell2010
+    Synopsis: Compatibility with Haskell 2010
+    Default available version: 1.1.2.0
+    Installed versions: 1.1.2.0
+    Homepage: http://www.haskell.org/onlinereport/haskell2010/
+    License:  BSD3
+
+* haskell98
+    Synopsis: Compatibility with Haskell 98
+    Default available version: 2.0.0.3
+    Installed versions: 2.0.0.3
+    Homepage: http://www.haskell.org/definition/
+    License:  BSD3
+
+* hoopl
+    Synopsis: A library to support dataflow analysis and optimization
+    Default available version: 3.10.0.1
+    Installed versions: 3.10.0.1
+    Homepage: http://ghc.cs.tufts.edu/hoopl/
+    License:  BSD3
+
+* hpc
+    Synopsis: Code Coverage Library for Haskell
+    Default available version: 0.6.0.1
+    Installed versions: 0.6.0.1
+    License:  BSD3
+
+* integer-gmp
+    Synopsis: Integer library based on GMP
+    Default available version: 0.5.1.0
+    Installed versions: 0.5.1.0
+    License:  BSD3
+
+* lens
+    Synopsis: Lenses, Folds and Traversals
+    Default available version: 4.2
+    Installed versions: 4.2
+    Homepage: http://github.com/ekmett/lens/
+    License:  BSD3
+
+* linear
+    Synopsis: Linear Algebra
+    Default available version: 1.10.1.2
+    Installed versions: 1.10.1.2
+    Homepage: http://github.com/ekmett/linear/
+    License:  BSD3
+
+* mtl
+    Synopsis: Monad classes, using functional dependencies
+    Default available version: 2.2.1
+    Installed versions: 2.1.3.1
+    Homepage: http://github.com/ekmett/mtl
+    License:  BSD3
+
+* nats
+    Synopsis: Natural numbers
+    Default available version: 0.2
+    Installed versions: 0.2
+    Homepage: http://github.com/ekmett/nats/
+    License:  BSD3
+
+* old-locale
+    Synopsis: locale library
+    Default available version: 1.0.0.6
+    Installed versions: 1.0.0.6
+    License:  BSD3
+
+* old-time
+    Synopsis: Time library
+    Default available version: 1.1.0.2
+    Installed versions: 1.1.0.2
+    License:  BSD3
+
+* pango
+    Synopsis: Binding to the Pango text rendering engine.
+    Default available version: 0.12.5.3
+    Installed versions: 0.12.5.3
+    Homepage: http://projects.haskell.org/gtk2hs/
+    License:  LGPL-2.1
+
+* parallel
+    Synopsis: Parallel programming library
+    Default available version: 3.2.0.4
+    Installed versions: 3.2.0.4
+    License:  BSD3
+
+* polyparse
+    Synopsis: A variety of alternative parser combinator libraries.
+    Default available version: 1.9
+    Installed versions: 1.9
+    Homepage: http://code.haskell.org/~malcolm/polyparse/
+    License:  LGPL
+
+* pqueue
+    Synopsis: Reliable, persistent, fast priority queues.
+    Default available version: 1.2.1
+    Installed versions: 1.2.1
+    License:  BSD3
+
+* prelude-extras
+    Synopsis: Haskell 98 - higher order versions of Prelude classes
+    Default available version: 0.4
+    Installed versions: 0.4
+    Homepage: http://github.com/ekmett/prelude-extras
+    License:  BSD3
+
+* pretty
+    Synopsis: Pretty-printing library
+    Default available version: 1.1.1.1
+    Installed versions: 1.1.1.1
+    Homepage: http://github.com/haskell/pretty
+    License:  BSD3
+
+* primitive
+    Synopsis: Primitive memory-related operations
+    Default available version: 0.5.3.0
+    Installed versions: 0.5.3.0
+    Homepage: https://github.com/haskell/primitive
+    License:  BSD3
+
+* process
+    Synopsis: Process libraries
+    Default available version: 1.2.0.0
+    Installed versions: 1.2.0.0
+    License:  BSD3
+
+* profunctors
+    Synopsis: Profunctors
+    Default available version: 4.0.4
+    Installed versions: 4.0.4
+    Homepage: http://github.com/ekmett/profunctors/
+    License:  BSD3
+
+* reactive-banana
+    Synopsis: Library for functional reactive programming (FRP).
+    Default available version: 0.8.0.2
+    Installed versions: 0.8.0.2
+    Homepage: http://haskell.org/haskellwiki/Reactive-banana
+    License:  BSD3
+
+* reflection
+    Synopsis: Reifies arbitrary terms into types that can be reflected back into
+              terms
+    Default available version: 1.4
+    Installed versions: 1.4
+    Homepage: http://github.com/ekmett/reflection
+    License:  BSD3
+
+* rts
+    Default available version: [ Not available from any configured repository ]
+    Installed versions: 1.0
+    License:  BSD3
+
+* scientific
+    Synopsis: Numbers represented using scientific notation
+    Default available version: 0.3.2.1
+    Installed versions: 0.3.2.1
+    Homepage: https://github.com/basvandijk/scientific
+    License:  BSD3
+
+* semigroupoids
+    Synopsis: Semigroupoids: Category sans id
+    Default available version: 4.0.2.1
+    Installed versions: 4.0.2.1
+    Homepage: http://github.com/ekmett/semigroupoids
+    License:  BSD3
+
+* semigroups
+    Synopsis: Anything that associates
+    Default available version: 0.15
+    Installed versions: 0.15
+    Homepage: http://github.com/ekmett/semigroups/
+    License:  BSD3
+
+* split
+    Synopsis: Combinator library for splitting lists.
+    Default available version: 0.2.2
+    Installed versions: 0.2.2
+    License:  BSD3
+
+* syb
+    Synopsis: Scrap Your Boilerplate
+    Default available version: 0.4.2
+    Installed versions: 0.4.2
+    Homepage: http://www.cs.uu.nl/wiki/GenericProgramming/SYB
+    License:  BSD3
+
+* tagged
+    Synopsis: Haskell 98 phantom types to avoid unsafely passing dummy arguments
+    Default available version: 0.7.2
+    Installed versions: 0.7.2
+    Homepage: http://github.com/ekmett/tagged
+    License:  BSD3
+
+* template-haskell
+    Synopsis: Support library for Template Haskell
+    Default available version: 2.9.0.0
+    Installed versions: 2.9.0.0
+    License:  BSD3
+
+* text
+    Synopsis: An efficient packed Unicode text type.
+    Default available version: 1.1.1.3
+    Installed versions: 1.1.1.3
+    Homepage: https://github.com/bos/text
+    License:  BSD3
+
+* time
+    Synopsis: A time library
+    Default available version: 1.4.2
+    Installed versions: 1.4.2
+    Homepage: http://semantic.org/TimeLib/
+    License:  BSD3
+
+* transformers
+    Synopsis: Concrete functor and monad transformers
+    Default available version: 0.4.1.0
+    Installed versions: 0.3.0.0
+    License:  BSD3
+
+* transformers-compat
+    Synopsis: A small compatibility shim exposing the new types from
+              transformers 0.3 and 0.4 to older Haskell platforms.
+    Default available version: 0.3.3.4
+    Installed versions: 0.3.3.4
+    Homepage: http://github.com/ekmett/transformers-compat/
+    License:  BSD3
+
+* unix
+    Synopsis: POSIX functionality
+    Default available version: 2.7.0.1
+    Installed versions: 2.7.0.1
+    Homepage: https://github.com/haskell/unix
+    License:  BSD3
+
+* unordered-containers
+    Synopsis: Efficient hashing-based container types
+    Default available version: 0.2.4.0
+    Installed versions: 0.2.4.0
+    Homepage: https://github.com/tibbe/unordered-containers
+    License:  BSD3
+
+* utf8-string
+    Synopsis: Support for reading and writing UTF8 Strings
+    Default available version: 0.3.8
+    Installed versions: 0.3.8
+    Homepage: http://github.com/glguy/utf8-string/
+    License:  BSD3
+
+* vault
+    Synopsis: a persistent store for values of arbitrary types
+    Default available version: 0.3.0.3
+    Installed versions: 0.3.0.3
+    Homepage: https://github.com/HeinrichApfelmus/vault
+    License:  BSD3
+
+* vector
+    Synopsis: Efficient Arrays
+    Default available version: 0.10.11.0
+    Installed versions: 0.10.11.0
+    Homepage: https://github.com/haskell/vector
+    License:  BSD3
+
+* vinyl
+    Synopsis: Extensible Records
+    Default available version: 0.4.1
+    Installed versions: 0.2.1
+    License:  MIT
+
+* vinyl-gl
+    Synopsis: Utilities for working with OpenGL's GLSL shading language and
+              vinyl records.
+    Default available version: 0.1.3
+    Installed versions: 0.1.2
+    License:  BSD3
+
+* void
+    Synopsis: A Haskell 98 logically uninhabited data type
+    Default available version: 0.6.1
+    Installed versions: 0.6.1
+    Homepage: http://github.com/ekmett/void
+    License:  BSD3
+
+* zlib
+    Synopsis: Compression and decompression in the gzip and zlib formats
+    Default available version: 0.5.4.1
+    Installed versions: 0.5.4.1
+    License:  BSD3
+
