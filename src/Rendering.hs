@@ -4,7 +4,9 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 module Rendering
-       ( initGL
+       ( Canvas
+       , ViewPort (Top, Side, Front, Perspective)
+       , initGL
        , doRealize
        ) where
 
@@ -22,34 +24,39 @@ import qualified Graphics.UI.Gtk.OpenGL as GtkGL
 import qualified Graphics.VinylGL as VG
 import qualified Linear as L
 import Data.Vinyl ((:::), (=:), (<+>))
-import Linear ((!*!))
+import Linear ((!*!), (!!*))
 import Graphics.Rendering.OpenGL (($=))
 
+  
+data ViewPort = Top | Side | Front | Perspective
+type Canvas = GtkGL.GLDrawingArea
+  
 
 -- initGL initializes GLFW (for timekeeping) and GtkGL. It does NOT initialize Gtk itself.
 -- It then returns a canvas.
-initGL :: IO GtkGL.GLDrawingArea
+initGL :: IO Canvas
 initGL = do
   GLFW.init
   GtkGL.initGL
 
-  glconfig <- GtkGL.glConfigNew [ GtkGL.GLModeRGBA
+  glConfig <- GtkGL.glConfigNew [ GtkGL.GLModeRGBA
                                 , GtkGL.GLModeDepth
                                 , GtkGL.GLModeDouble
                                 ]
-  GtkGL.glDrawingAreaNew glconfig
+  GtkGL.glDrawingAreaNew glConfig
 
 
 -- doRealize should be called when a canvas has been realized. It then allocates the necessary
 -- OpenGL resources and sets up the proper redraw event callback.
 doRealize :: GtkGL.GLDrawingArea -> IO ()
 doRealize canvas = do
-  program <- initResources
-  Gtk.onExpose canvas $ \_ -> do
-    GtkGL.withGLDrawingArea canvas $ \glwindow -> do
-      draw program glwindow
-      GtkGL.glDrawableSwapBuffers glwindow
-    return True
+  GtkGL.withGLDrawingArea canvas $ \_ -> do
+    program <- initResources
+    Gtk.onExpose canvas $ \_ -> do
+      GtkGL.withGLDrawingArea canvas $ \glwindow -> do
+        draw program glwindow
+        GtkGL.glDrawableSwapBuffers glwindow
+      return True
   return ()
 
 
@@ -114,11 +121,13 @@ draw (GLResources prg buf eBuf) glwindow = do
   
 -- transformM generates a transformation matrix to be passed to the vertex shader.
 transformM :: Int -> Int -> Double -> V.PlainRec '[MVP]
-transformM width height t = mvp =: (proj !*! view !*! model !*! anim)
+transformM width height t = mvp =: (move !*! scale !*! proj !*! view !*! model !*! anim)
   where anim  = L.mkTransformation (L.axisAngle (L.V3 0 1 0) angle) L.zero
         model = L.mkTransformationMat L.eye3 $ L.V3 0 0 (-4)
         view  = U.camMatrix $ U.tilt (-30) . U.dolly (L.V3 0 2 0) $ U.fpsCamera
         proj  = U.projectionMatrix (pi/4) aspect 0.1 10
+        scale = L.V4 (L.V4 0.5 0 0 0) (L.V4 0 0.5 0 0) (L.V4 0 0 1 0) (L.V4 0 0 0 1)
+        move  = L.mkTransformation (L.axisAngle (L.V3 0 0 1) 0.0) (L.V3 0.5 0.5 0)
 
         angle = realToFrac t * pi / 4
         aspect = fromIntegral width / fromIntegral height
