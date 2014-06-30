@@ -18,7 +18,7 @@ import Rendering
 data Handlers = Handlers
                 { addOnRealize :: AddHandler ()
                 }
-                   
+
 -- The Plugs type contains all the IO actions used to fire events in the reactive network.
 -- This is passed out of this module upon calling buildNetwork. The caller must then add event
 -- callbacks to the GUI widgets which call these actions as necessary.
@@ -26,11 +26,11 @@ data Plugs = Plugs
              { onRealize :: () -> IO ()
              }
 
-             
+
 -- Creates all the handlers and plugs.
 makeHandlers :: IO (Handlers, Plugs)
 makeHandlers = bimap Handlers Plugs <$> newAddHandler
-               
+
 
 -- This function calls makeHandlers to set up all the handlers and plugs, then calls makeNetwork
 -- to set up the actual network using the handlers (which is where all the application logic happens).
@@ -42,7 +42,7 @@ buildNetwork canvas = do
   network <- compile (makeNetwork handlers canvas)
   actuate network
   return plugs
-  
+
 
 -- Makenetwork builds the reactive application network using the provided handlers.
 makeNetwork :: Frameworks t => Handlers -> GtkGL.GLDrawingArea -> Moment t ()

@@ -14,7 +14,7 @@ main = do
   -- Initialize the GL tools and get a canvas.
   canvas <- initGL
   Gtk.widgetSetSizeRequest canvas 640 480
-  
+
   -- Create the GUI
   window <- Gtk.windowNew
   Gtk.onDestroy window Gtk.mainQuit
@@ -28,7 +28,7 @@ main = do
   -- Fire the realize event when the canvas is ready. This creates the OpenGL resources
   -- and initializes rendering.
   Gtk.onRealize canvas $ GtkGL.withGLDrawingArea canvas $ \_ -> (onRealize plugs) ()
- 
+
   -- Make sure the redraw event is regularly fired.
   Gtk.timeoutAddFull (Gtk.widgetQueueDraw canvas >> return True) Gtk.priorityDefaultIdle animationWaitTime
 

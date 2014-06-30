@@ -63,14 +63,14 @@ coord3d = V.Field :: Pos
 v_color = V.Field :: Color
 mvp = V.Field :: MVP
 
- 
+
 -- The GLResources struct contains a shader program and various buffer objects.
 data GLResources = GLResources
                    { glProgram :: U.ShaderProgram
                    , buffer :: VG.BufferedVertices [Pos, Color]
                    , elementBuffer :: GL.BufferObject
                    }
- 
+
 
 -- initResources sets some OpenGL state variables (the ones that won't change), and returns
 -- a GLResources struct.
@@ -95,11 +95,11 @@ initResources = do
 draw :: GLResources -> GtkGL.GLWindow -> IO ()
 draw (GLResources prg buf eBuf) glwindow = do
   GL.clear [GL.ColorBuffer, GL.DepthBuffer]
-  
+
   -- Make sure resizing is properly dealt with.
   (width, height) <- GtkGL.glDrawableGetSize glwindow
   GL.viewport $= (GL.Position 0 0, GL.Size (fromIntegral width) (fromIntegral height))
-  
+
   -- Elapsed time.
   t <- maybe 0 id <$> GLFW.getTime
 
@@ -111,7 +111,7 @@ draw (GLResources prg buf eBuf) glwindow = do
   GL.bindBuffer GL.ElementArrayBuffer $= Just eBuf
   U.drawIndexedTris (fromIntegral $ length elements)
 
-  
+
 -- transformM generates a transformation matrix to be passed to the vertex shader.
 transformM :: Int -> Int -> Double -> V.PlainRec '[MVP]
 transformM width height t = mvp =: (proj !*! view !*! model !*! anim)
@@ -123,7 +123,7 @@ transformM width height t = mvp =: (proj !*! view !*! model !*! anim)
         angle = realToFrac t * pi / 4
         aspect = fromIntegral width / fromIntegral height
 
-        
+
 -- Vertex, color and element buffers to display a rainbow cube.
 vertices :: [V.PlainRec '[Pos]]
 vertices = map (coord3d =:) $ L.V3 <$> [1,-1] <*> [1,-1] <*> [1,-1]
