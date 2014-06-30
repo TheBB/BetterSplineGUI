@@ -1,8 +1,8 @@
 module Main where
 
-import qualified Graphics.UI.Gtk as Gtk
 import qualified Graphics.UI.Gtk.OpenGL as GtkGL
-import Graphics.UI.Gtk (AttrOp((:=)), on)
+import Control.Monad.IO.Class (liftIO)
+import Graphics.UI.Gtk as Gtk hiding (onRealize)
 
 import Program
 import Rendering
@@ -13,27 +13,23 @@ main = do
 
   -- Initialize the GL tools and get a canvas.
   canvas <- initGL
-  Gtk.widgetSetSizeRequest canvas 640 480
-
+  widgetSetSizeRequest canvas 640 480
   -- Create the GUI
-  window <- Gtk.windowNew
-  Gtk.onDestroy window Gtk.mainQuit
-  Gtk.set window [ Gtk.windowTitle := "Gtk2Hs + HOpenGL demo"
-                 , Gtk.containerChild := canvas
-                 ]
+  window <- windowNew
+  set window [ windowTitle := "Gtk2Hs + HOpenGL demo"
+             , containerChild := canvas
+             ]
 
   -- Create the reactive network and get the plugs.
-  plugs <- buildNetwork canvas
+  plugs <- buildNetwork
 
-  -- Fire the realize event when the canvas is ready. This creates the OpenGL resources
-  -- and initializes rendering.
-  Gtk.onRealize canvas $ GtkGL.withGLDrawingArea canvas $ \_ -> (onRealize plugs) ()
-
-  -- Make sure the redraw event is regularly fired.
-  Gtk.timeoutAddFull (Gtk.widgetQueueDraw canvas >> return True) Gtk.priorityDefaultIdle animationWaitTime
+  -- Event handlers
+  canvas `on` realize $ onCanvasRealize plugs canvas
+  window `on` objectDestroy $ mainQuit
+  timeoutAddFull (widgetQueueDraw canvas >> return True) priorityDefaultIdle animationWaitTime
 
   -- Start the application
-  Gtk.widgetShowAll window
-  Gtk.mainGUI
+  widgetShowAll window
+  mainGUI
 
   where animationWaitTime = 3
