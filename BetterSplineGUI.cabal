@@ -1,21 +1,21 @@
 name:                           BetterSplineGUI
 version:                        0.1.0.0
--- synopsis:            
--- description:         
+-- synopsis:
+-- description:
 license:                        AllRightsReserved
 license-file:                   LICENSE
 author:                         Eivind Fonn
 maintainer:                     evfonn@gmail.com
--- copyright:           
+-- copyright:
 category:                       Graphics
 build-type:                     Simple
--- extra-source-files:  
+-- extra-source-files:
 cabal-version:                  >= 1.10
 
 executable BetterSplineGUI
     main-is:                    Main.hs
-    -- other-modules:       
-    -- other-extensions:    
+    -- other-modules:
+    -- other-extensions:
     build-depends:              transformers >= 0.3.0.0,
                                 base >= 4.7 && < 4.8,
                                 GLFW-b >= 1.4.6 && < 1.5,
@@ -23,8 +23,6 @@ executable BetterSplineGUI
                                 filepath >= 1.3.0.2 && < 1.4,
                                 GLUtil >= 0.7.4 && < 0.8,
                                 linear >= 1.10.1.2 && < 1.11,
-                                vinyl >= 0.2 && < 0.3,
-                                vinyl-gl >= 0.1 && < 0.2,
                                 bytestring >= 0.10.4 && < 0.11,
                                 file-embed >= 0.0.7 && < 0.1,
                                 gtk >= 0.12.5.7 && < 0.13,

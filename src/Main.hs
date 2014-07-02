@@ -2,14 +2,14 @@ module Main where
 
 import qualified Graphics.UI.Gtk.OpenGL as GtkGL
 import Control.Monad.IO.Class (liftIO)
-import Graphics.UI.Gtk as Gtk hiding (onRealize)
+import Graphics.UI.Gtk
 
 import Program
 import Rendering
 
 main :: IO ()
 main = do
-  Gtk.initGUI
+  initGUI
 
   -- Initialize the GL tools and get a canvas.
   canvas <- initGL
@@ -24,7 +24,7 @@ main = do
   plugs <- buildNetwork
 
   -- Event handlers
-  canvas `on` realize $ onCanvasRealize plugs canvas
+  canvas `on` realize $ onCanvasReady plugs canvas
   window `on` objectDestroy $ mainQuit
   timeoutAddFull (widgetQueueDraw canvas >> return True) priorityDefaultIdle animationWaitTime
 
