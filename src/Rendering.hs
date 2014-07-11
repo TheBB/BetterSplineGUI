@@ -5,7 +5,6 @@
 
 module Rendering
        ( Canvas
-       , ViewPort (Top, Side, Front, Perspective)
        , initGL
        , canvasReady
        ) where
@@ -26,8 +25,17 @@ import Graphics.Rendering.OpenGL (($=))
 import Graphics.UI.Gtk
 
 
-data ViewPort = Top | Side | Front | Perspective
 type Canvas = GtkGL.GLDrawingArea
+
+data CameraType = Perspective | Ortohgraphic
+
+data Camera = Camera
+              { lookAt :: L.V3 Double
+              , zoom :: Double
+              , azimuth :: Double
+              , inclination :: Double
+              , kind :: CameraType
+              }
 
 
 -- initGL initializes GLFW (for timekeeping) and GtkGL. It does NOT initialize Gtk itself.
@@ -118,28 +126,42 @@ draw (GLResources prg vBuf cBuf eBuf) glwindow = do
              ]
 
   mapM_ (uncurry $ enableArrayBuffer prg) bufs
-  U.asUniform (transformM width height t) $ U.getUniform prg "mvp"
+  U.asUniform (transform width height (cam t)) $ U.getUniform prg "mvp"
   GL.bindBuffer GL.ElementArrayBuffer $= Just eBuf
   U.drawIndexedTris (fromIntegral $ length elements)
   mapM_ (disableArrayBuffer prg) $ map snd bufs
   GtkGL.glDrawableSwapBuffers glwindow
 
+  where cam t = let s = realToFrac t
+                in Camera { lookAt = L.V3 0 0 0
+                          , zoom = 0.03 * t
+                          , azimuth = 0.3 * t
+                          , inclination = 0.09 * t
+                          , kind = Perspective
+                          }
+
 
 -- transformM generates a transformation matrix to be passed to the vertex shader.
-transformM :: Int -> Int -> Double -> L.M44 GL.GLfloat
-transformM width height t = proj !*! view !*! model !*! anim
-  where anim  = L.mkTransformation (L.axisAngle (L.V3 0 1 0) angle) L.zero
-        model = L.mkTransformationMat L.eye3 $ L.V3 0 0 (-4)
-        view  = U.camMatrix $ U.tilt (-30) . U.dolly (L.V3 0 2 0) $ U.fpsCamera
-        proj  = U.projectionMatrix (pi/4) aspect 0.1 10
-
-        angle = realToFrac t * pi / 4
+transform :: Int -> Int -> Camera -> L.M44 GL.GLfloat
+transform width height cam = projMx !*! camMx !*! hRotMx !*! vRotMx !*! scaleMx !*! lookAtMx
+  where lookAtMx = L.mkTransformationMat L.eye3 $ negate lkat
+        scaleMx = let s = realToFrac $ zoom cam
+                  in L.V4 (L.V4 s 0 0 0) (L.V4 0 s 0 0) (L.V4 0 0 s 0) (L.V4 0 0 0 1)
+        vRotMx = L.mkTransformation (L.axisAngle (L.V3 0 0 1) azim) L.zero
+        hRotMx = L.mkTransformation (L.axisAngle (L.V3 1 0 0) incl) L.zero
+        camMx = U.camMatrix $ U.dolly (L.V3 0 0 1) . U.roll 90 $ U.rosCamera
+        projMx = U.projectionMatrix (pi/4) aspect 0.1 1000
         aspect = fromIntegral width / fromIntegral height
+
+        azim = realToFrac $ azimuth cam
+        incl = realToFrac $ inclination cam
+        lkat = realToFrac <$> lookAt cam
 
 
 -- Vertex, color and element buffers to display a rainbow cube.
 vertices :: [L.V3 Float]
-vertices = L.V3 <$> [1,-1] <*> [1,-1] <*> [1,-1]
+-- vertices = L.V3 <$> [0.5,-0.5] <*> [2,-2] <*> [4.5,-4.5]
+vertices = L.V3 <$> [0.05,-0.05] <*> [0.2,-0.2] <*> [0.45,-0.45]
 
 colors :: [L.V3 Float]
 colors = L.V3 <$> [1,-1] <*> [1,-1] <*> [1,-1]
